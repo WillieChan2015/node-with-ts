@@ -24,5 +24,5 @@ gulp
 ```bash
 yarn build
 # 使用 npm:
-npm run dev
+npm run build
 ```
