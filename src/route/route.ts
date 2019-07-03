@@ -1,5 +1,7 @@
 import koa from 'koa';
 import Router from 'koa-router';
+import fs from 'fs';
+import path from 'path';
 
 const route = new Router();
 
@@ -19,18 +21,32 @@ const about = (ctx: Context) => {
     ctx.response.body = '<a href="/">Index Page</a>';
 };
 
-// const main = (ctx: Context) => {
-//     ctx.response.type = 'html';
-//     ctx.response.body = `
-//         Hello World
-//         <br>
-//         <a href="/about">About Page</a>
-//         <br>
-//         <a href="/get_name">get name</a>
-//         <br>
-//         <a href="/test_post">Test post</a>
-//     `;
-// };
+const main = (ctx: Context, next: Next) => {
+    // ctx.response.type = 'html';
+    // ctx.response.body = `
+    //     Hello World
+    //     <br>
+    //     <a href="/about">About Page</a>
+    //     <br>
+    //     <a href="/get_name">get name</a>
+    //     <br>
+    //     <a href="/test_post">Test post</a>
+    // `;
+    ctx.cookies.set(
+        'cid', 
+        'hello world',
+        {
+            domain: 'localhost',  // 写cookie所在的域名
+            path: '/',       // 写cookie所在的路径
+            maxAge: 10 * 60 * 1000, // cookie有效时长
+            expires: new Date('2019-08-15'),  // cookie失效时间
+            httpOnly: false,  // 是否只用于http请求中获取
+            overwrite: false  // 是否允许重写
+        }
+    );
+    let content = fs.readFileSync(path.join(__dirname, "../../static/index.html"), 'binary');
+    ctx.body = content;
+};
 
 const testPost = (ctx: Context) => {
     if (  ctx.method === 'GET' ) {
@@ -77,7 +93,7 @@ const getName = (ctx: Context) => {
 
 
 route.all("*", check);
-// route.get('/', main);
+route.get('/', main);
 route.get('/about', about);
 route.get('/get_name', getName);
 route.all('/test_post', testPost);
