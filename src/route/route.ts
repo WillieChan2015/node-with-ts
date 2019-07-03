@@ -2,6 +2,7 @@ import koa from 'koa';
 import Router from 'koa-router';
 import fs from 'fs';
 import path from 'path';
+import logger from '../util/logger';
 
 const route = new Router();
 
@@ -9,11 +10,10 @@ type Context = koa.ParameterizedContext;
 type Next = () => Promise<any>;
 
 const check = async (ctx: Context, next: Next): Promise<any> => {
-    console.log('method: ' + ctx.method);
-    console.log('request path: ' + ctx.path);
-    console.log("request time: " + new Date());
-    console.log();
-    await next();
+    // logger.info('method: ' + ctx.method);
+    // logger.info('request path: ' + ctx.path);
+    // logger.info("request time: " + new Date());
+    return next();
 };
 
 const about = (ctx: Context) => {
@@ -97,9 +97,9 @@ route.get('/', main);
 route.get('/about', about);
 route.get('/get_name', getName);
 route.all('/test_post', testPost);
-// route.all("*", (ctx) => {
-//     ctx.status = 404;
-//     ctx.body = 'Not Found'
-// });
+route.all("*", (ctx) => {
+    ctx.status = 404;
+    ctx.body = '404 Not Found'
+});
 
 export default route;
