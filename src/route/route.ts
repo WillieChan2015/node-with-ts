@@ -19,18 +19,18 @@ const about = (ctx: Context) => {
     ctx.response.body = '<a href="/">Index Page</a>';
 };
 
-const main = (ctx: Context) => {
-    ctx.response.type = 'html';
-    ctx.response.body = `
-        Hello World
-        <br>
-        <a href="/about">About Page</a>
-        <br>
-        <a href="/get_name">get name</a>
-        <br>
-        <a href="/test_post">Test post</a>
-    `;
-};
+// const main = (ctx: Context) => {
+//     ctx.response.type = 'html';
+//     ctx.response.body = `
+//         Hello World
+//         <br>
+//         <a href="/about">About Page</a>
+//         <br>
+//         <a href="/get_name">get name</a>
+//         <br>
+//         <a href="/test_post">Test post</a>
+//     `;
+// };
 
 const testPost = (ctx: Context) => {
     if (  ctx.method === 'GET' ) {
@@ -77,9 +77,13 @@ const getName = (ctx: Context) => {
 
 
 route.all("*", check);
-route.get('/', main);
+// route.get('/', main);
 route.get('/about', about);
 route.get('/get_name', getName);
 route.all('/test_post', testPost);
+// route.all("*", (ctx) => {
+//     ctx.status = 404;
+//     ctx.body = 'Not Found'
+// });
 
 export default route;
