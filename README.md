@@ -1,4 +1,4 @@
-# node with ts
+# node(koa) with ts
 
 ## dev
 热启动开发服务有以下几种方式：

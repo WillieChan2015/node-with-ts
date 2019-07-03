@@ -1,14 +1,15 @@
-import * as http from 'http';
+import koa from 'koa';
+// import route from 'koa-route';
+import route from './route/route';
+import bodyparser from 'koa-bodyparser';
 
-const server = http.createServer(function(req: http.IncomingMessage, res: http.ServerResponse): void {
-    console.log("connect server...");
-    res.writeHead(200, {
-        'Content-Type': 'text/plain'
-    });
-    res.write("Hello TypeScript");
-    res.end();
-});
+// type Context = koa.ParameterizedContext;
 
-server.listen(8082, function() {
-    console.log("Server ls listening at http://localhost:8082");
+const app: koa = new koa();
+
+app.use(bodyparser());
+app.use(route.routes());
+
+app.listen(3001, () => {
+    console.log('[demo] route-use-middleware is starting at port 3001')
 });
