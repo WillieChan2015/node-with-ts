@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon dist/server.js",
+    "dev": "set NODE_ENV=development && nodemon dist/server.js",
     "build": "tsc"
   },
   "devDependencies": {
