@@ -1,6 +1,6 @@
 {
   "verbose": true,
-  "ignore": ["public/*", "node_modules/*", "static/*"],
+  "ignore": ["public/*", "node_modules/*", "static/*", "logs/*"],
   "events": {
     "restart": "osascript -e 'display notification \"App restarted due to:\n'$FILENAME'\" with title \"nodemon\"'"
   },
