@@ -1,11 +1,15 @@
 # node(koa) with ts
 
+本项目模版使用ts为编程语言编写的node后台，服务器使用 `koa`，数据库使用 `MongoDB`，并使用 `mongoose` 去操作`MongoDB`。
+
 ## dev
 热启动开发服务有以下几种方式：
 1. 方法1：
 ```Bash
+# 首先需要启动该命令把 ts 文件编译成 js，打包出的文件位于 `./dist` 目录下
 tsc --watch
-# 打开另一个命令行窗口
+
+# 之后打开另一个命令行窗口，并运行
 # 使用 yarn:
 yarn dev
 # 使用 npm:

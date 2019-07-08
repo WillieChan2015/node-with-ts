@@ -1,7 +1,7 @@
 {
   "name": "ts-node-1",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/server.ts",
   "license": "MIT",
   "scripts": {
     "dev": "set NODE_ENV=development&& nodemon dist/server.js",
