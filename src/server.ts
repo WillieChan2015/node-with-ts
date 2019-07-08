@@ -19,6 +19,6 @@ app.use(staticMiddleware(
 app.use(bodyparser());
 app.use(route.routes());
 
-app.listen(3001, () => {
-    console.log('[demo] route-use-middleware is starting at port 3001')
+app.listen(3011, () => {
+    console.log('[node-server] Server is starting at port 3001')
 });

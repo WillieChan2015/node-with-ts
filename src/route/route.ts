@@ -2,9 +2,35 @@ import koa from 'koa';
 import Router from 'koa-router';
 import fs from 'fs';
 import path from 'path';
-import logger from '../util/logger';
+import {log} from '../util/logger';
+import Mongo from '../controller/mongo';
+import Mongoose from 'mongoose';
 
+type MongooseInstance = typeof Mongoose;
+
+const logger = log("route");
+const getStaticFile = (filename: string): string => {
+    let filepath = path.join(__dirname, `../../static/${filename}`);
+    return filepath;
+}
 const route = new Router();
+
+// 引入MongoDB
+const mongoose: MongooseInstance = new Mongo().connect();
+// 创建 Schema 对象
+const Schema = mongoose.Schema;
+const UserSchema = new Schema({
+    userName: {
+        type: String,
+        required: true,
+    },
+    nickName: {
+        type: String,
+        required: true,
+    },
+    email: String,
+});
+const UserModel = mongoose.model("UserModel", UserSchema);
 
 type Context = koa.ParameterizedContext;
 type Next = () => Promise<any>;
@@ -44,11 +70,11 @@ const main = (ctx: Context, next: Next) => {
             overwrite: false  // 是否允许重写
         }
     );
-    let content = fs.readFileSync(path.join(__dirname, "../../static/index.html"), 'binary');
+    let content = fs.readFileSync(getStaticFile("index.html"), 'binary');
     ctx.body = content;
 };
 
-const testPost = (ctx: Context) => {
+const testPost = async (ctx: Context) => {
     if (  ctx.method === 'GET' ) {
         // 当GET请求时候返回表单页面
         let html = `
@@ -67,15 +93,39 @@ const testPost = (ctx: Context) => {
     } else if (  ctx.method === 'POST' ) {
         // 当POST请求的时候，中间件koa-bodyparser解析POST表单里的数据，并显示出来
         let postData = ctx.request.body;
-        console.log(postData);
-        ctx.body = postData;
+        logger.info('post data: ', postData);
+
+        const doc = new UserModel(postData);
+        let resDoc;
+
+        try {
+            resDoc = await doc.save();
+            logger.debug('resDoc', resDoc);
+
+            ctx.body = `
+                <p>提交成功</p>
+                <p>data:</p>
+                <pre>${JSON.stringify(postData, undefined, 4)}</pre>
+                <br>
+                <a href="/">Return Index Page</a>
+            `;
+        } catch(e) {
+            logger.error("写入MongoDB失败", e);
+
+            ctx.body = `
+                <p>提交失败</p>
+                <br>
+                <a href="/">Return Index Page</a>
+            `;
+        }
+        
     } else {
         // 其他请求显示404
         ctx.body = '<h1>404！！！ o(╯□╰)o</h1>'
     }
 };
 
-const getName = (ctx: Context) => {
+const getName = async (ctx: Context) => {
     // if (ctx.method.toLowerCase() === 'get') {
     //     ctx.response.status = 403;
     //     ctx.response.type = 'json';
@@ -85,10 +135,17 @@ const getName = (ctx: Context) => {
     //     };
     //     return
     // }
-    ctx.response.type = 'json';
-    ctx.response.body = {
-        name: 'Jack'
-    };
+    logger.debug("getName===================");
+    let users = await UserModel.find({
+        // userName: /name/,
+    }, {
+        userName: 1,
+        nickName: 1,
+        email: 1,
+        _id: 0,
+    });
+    // ctx.response.type = 'html';
+    ctx.response.body = users;
 };
 
 

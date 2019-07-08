@@ -1,8 +1,10 @@
 import log4js from 'log4js';
 import koa from 'koa';
 
-console.log("当前环境: ", process.env.NODE_ENV);
+console.log("当前环境: ", `'${process.env.NODE_ENV}'`);
+console.log(process.env.NODE_ENV === 'development');
 const logLevel = process.env.NODE_ENV === 'development' ? "debug" : "info";
+console.log("logLevel: ", logLevel);
 
 log4js.configure({
     appenders: {
