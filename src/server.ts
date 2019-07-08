@@ -1,6 +1,6 @@
 import koa from 'koa';
 // import route from 'koa-route';
-import route from './route/route';
+import route, {AuthCheck} from './route/route';
 import bodyparser from 'koa-bodyparser';
 import staticMiddleware from 'koa-static';
 import path from 'path';
@@ -13,6 +13,7 @@ const app: koa = new koa();
 const staticPath = '../static';
 
 app.use(loggerMiddleware);
+app.use(AuthCheck);
 app.use(staticMiddleware(
     path.join(__dirname, staticPath)
 ));

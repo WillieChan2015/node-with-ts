@@ -35,12 +35,48 @@ const UserModel = mongoose.model("UserModel", UserSchema);
 type Context = koa.ParameterizedContext;
 type Next = () => Promise<any>;
 
-const check = async (ctx: Context, next: Next): Promise<any> => {
-    // logger.info('method: ' + ctx.method);
-    // logger.info('request path: ' + ctx.path);
-    // logger.info("request time: " + new Date());
+export const AuthCheck = async (ctx: Context, next: Next): Promise<any> => {
+    if (ctx.path === '/login' || ctx.path.indexOf('/src/') === 0) {
+        return next();
+    }
+
+    let sessionId = ctx.cookies.get('SESSION_ID');
+    logger.debug("sessionId", sessionId);
+    if (!sessionId) {
+        logger.debug("redirect /login");
+        ctx.redirect('/login');
+        return;
+    }
+
     return next();
 };
+
+const login = (ctx: Context) => {
+    if (ctx.method === 'GET') {
+        logger.debug("login=============>")
+        let content = fs.readFileSync(getStaticFile("login.html"), 'utf-8');
+        ctx.body = content;
+    } else if (ctx.method === 'POST') {
+        let postData = ctx.request.body;
+        logger.info('post data: ', postData);
+        ctx.cookies.set(
+            'SESSION_ID',
+            'test',
+            {
+                domain: 'localhost',  // 写cookie所在的域名
+                path: '/',       // 写cookie所在的路径
+                maxAge: 10 * 60 * 1000, // cookie有效时长
+                expires: new Date('2019-08-15'),  // cookie失效时间
+                httpOnly: true,  // 是否只用于http请求中获取
+                overwrite: false  // 是否允许重写
+            }
+        );
+        ctx.redirect("/");
+    } else {
+        ctx.status = 403;
+        ctx.body = '<h1>method not allowed</h1>';
+    }
+}
 
 const about = (ctx: Context) => {
     ctx.response.type = 'html';
@@ -149,8 +185,10 @@ const getName = async (ctx: Context) => {
 };
 
 
-route.all("*", check);
+// route.all("*", check);
+// koa-static 会自动将 path = '/' 引导至 'index.html'
 route.get('/', main);
+route.all('/login', login);
 route.get('/about', about);
 route.get('/get_name', getName);
 route.all('/test_post', testPost);
