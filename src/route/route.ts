@@ -48,6 +48,19 @@ export const AuthCheck = async (ctx: Context, next: Next): Promise<any> => {
         return;
     }
 
+    ctx.cookies.set(
+        'SESSION_ID',
+        'test',
+        {
+            domain: 'localhost',  // 写cookie所在的域名
+            path: '/',       // 写cookie所在的路径
+            maxAge: 30 * 60 * 1000, // cookie有效时长
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),  // cookie失效时间
+            httpOnly: true,  // 是否只用于http请求中获取
+            overwrite: false  // 是否允许重写
+        }
+    );
+
     return next();
 };
 
@@ -66,7 +79,7 @@ const login = (ctx: Context) => {
                 domain: 'localhost',  // 写cookie所在的域名
                 path: '/',       // 写cookie所在的路径
                 maxAge: 30 * 60 * 1000, // cookie有效时长
-                expires: new Date('2019-08-15'),  // cookie失效时间
+                expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),  // cookie失效时间
                 httpOnly: true,  // 是否只用于http请求中获取
                 overwrite: false  // 是否允许重写
             }
@@ -97,18 +110,18 @@ const main = (ctx: Context, next: Next) => {
     //     <br>
     //     <a href="/test_post">Test post</a>
     // `;
-    ctx.cookies.set(
-        'cid', 
-        'hello world',
-        {
-            domain: 'localhost',  // 写cookie所在的域名
-            path: '/',       // 写cookie所在的路径
-            maxAge: 10 * 60 * 1000, // cookie有效时长
-            expires: new Date('2019-08-15'),  // cookie失效时间
-            httpOnly: false,  // 是否只用于http请求中获取
-            overwrite: false  // 是否允许重写
-        }
-    );
+    // ctx.cookies.set(
+    //     'cid', 
+    //     'hello world',
+    //     {
+    //         domain: 'localhost',  // 写cookie所在的域名
+    //         path: '/',       // 写cookie所在的路径
+    //         maxAge: 10 * 60 * 1000, // cookie有效时长
+    //         expires: new Date('2019-08-15'),  // cookie失效时间
+    //         httpOnly: false,  // 是否只用于http请求中获取
+    //         overwrite: false  // 是否允许重写
+    //     }
+    // );
     let content = fs.readFileSync(getStaticFile("index.html"), 'binary');
     ctx.body = content;
 };
