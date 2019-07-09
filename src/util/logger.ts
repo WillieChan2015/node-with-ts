@@ -45,12 +45,15 @@ log4js.configure({
 const loggerIns = log4js.getLogger();
 
 export async function loggerMiddleware(ctx: koa.ParameterizedContext, next: () => Promise<any>): Promise<any> {
+    if (ctx.path.indexOf('/src/') === 0) {
+        return next();
+    }
     loggerIns.info('request: ', ctx.method, ctx.path);
     loggerIns.info('user-agent: ' + ctx.headers['user-agent']);
     return next();
 }
 
-export function log(name: string) {
+export function log(name: string): log4js.Logger {
     const logger = log4js.getLogger(name);
     return logger;
 }
