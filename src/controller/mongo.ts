@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { MongoDB_CONFIG } from '../config';
 
-const DB_URL: string = 'mongodb://localhost:27017/';
+const DB_URL = MongoDB_CONFIG.DB_URL;
 
 // mongoose.connect(DB_URL, (err) => {
 //     if (err) {
@@ -20,7 +21,7 @@ export default class Mongo {
      * 连接 MongoDB 并返回该实例
      * @param databaseName 数据库名称
      */
-    connect(databaseName: String = 'test'): typeof mongoose {
+    connect(databaseName: string = 'test'): typeof mongoose {
         console.log('MongoDB 连接中...');
         console.log(`连接数据库 ${databaseName} ...`);
         mongoose.connect(DB_URL + databaseName, { useNewUrlParser: true }, (err) => {
