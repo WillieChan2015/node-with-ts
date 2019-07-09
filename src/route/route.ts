@@ -65,7 +65,7 @@ const login = (ctx: Context) => {
             {
                 domain: 'localhost',  // 写cookie所在的域名
                 path: '/',       // 写cookie所在的路径
-                maxAge: 10 * 60 * 1000, // cookie有效时长
+                maxAge: 30 * 60 * 1000, // cookie有效时长
                 expires: new Date('2019-08-15'),  // cookie失效时间
                 httpOnly: true,  // 是否只用于http请求中获取
                 overwrite: false  // 是否允许重写
@@ -80,7 +80,10 @@ const login = (ctx: Context) => {
 
 const about = (ctx: Context) => {
     ctx.response.type = 'html';
-    ctx.response.body = '<a href="/">Index Page</a>';
+    ctx.response.body = `
+        <p>This is about page</p>
+        <a href="/">Index Page</a>
+    `;
 };
 
 const main = (ctx: Context, next: Next) => {
@@ -121,8 +124,10 @@ const testPost = async (ctx: Context) => {
             <p>nickName</p>
             <input name="nickName" /><br/>
             <p>email</p>
-            <input name="email" /><br/>
+            <input name="email" /><br/><br/>
             <button type="submit">submit</button>
+            <br><br>
+            <a href="/">Return Index Page</a>
           </form>
         `;
         ctx.body = html
@@ -181,7 +186,40 @@ const getName = async (ctx: Context) => {
         _id: 0,
     });
     // ctx.response.type = 'html';
-    ctx.response.body = users;
+    let html = `
+        <table border="1">
+            <tr style="padding: 5px;">
+                <td>userName</td>
+                <td>nickName</td>
+                <td>email</td>
+            </tr>
+    `;
+    users.forEach(item => {
+        html += `
+            <tr><td>${item.userName}</td><td>${item.nickName}</td><td>${item.email}</td></tr>
+        `;
+    });
+    html += '</table>'
+    html = `
+        <!DOCTYPE html>
+        <html lang="zh-cn">
+        <head>
+            <style>
+                td {
+                    padding: 5px;
+                }
+            </style>
+        </head>
+        <body>
+            <p>用户数据：</p>
+            ${html}
+            <br>
+            <a href="/">Return Index Page</a>
+        </body>
+        </html>
+    `;
+    ctx.response.type = 'text/html';
+    ctx.response.body = html;
 };
 
 
